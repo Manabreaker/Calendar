@@ -1,10 +1,11 @@
 package eventStore
 
 import (
+	"encoding/json"
 	"errors"
 	"sync"
 
-	"github.com/gibel/Calendar/model"
+	"github.com/Manabreaker/Calendar/model"
 )
 
 type EventStore struct {
@@ -12,7 +13,7 @@ type EventStore struct {
 	events []model.Event
 }
 
-func (es *EventStore) Create(key string, value []byte) error {
+func (es *EventStore) Create(value []byte) error {
 	es.mu.Lock()
 	defer es.mu.Unlock()
 	event, err := decodeEvent(value)
@@ -21,11 +22,10 @@ func (es *EventStore) Create(key string, value []byte) error {
 	}
 	// Проверка на уникальность ID
 	for _, e := range es.events {
-		if e.ID == key {
+		if e.ID == event.ID {
 			return errors.New("event with this ID already exists")
 		}
 	}
-	event.ID = key
 	es.events = append(es.events, event)
 	return nil
 }
@@ -35,7 +35,7 @@ func (es *EventStore) Read(key string) ([]byte, error) {
 	defer es.mu.RUnlock()
 	for _, e := range es.events {
 		if e.ID == key {
-			return encodeEvent(e)
+			return json.Marshal(e)
 		}
 	}
 	return nil, errors.New("event not found")
@@ -50,7 +50,6 @@ func (es *EventStore) Update(key string, value []byte) error {
 	}
 	for i, e := range es.events {
 		if e.ID == key {
-			event.ID = key
 			es.events[i] = event
 			return nil
 		}
@@ -70,16 +69,16 @@ func (es *EventStore) Delete(key string) error {
 	return errors.New("event not found")
 }
 
-// Вспомогательные функции для сериализации/десериализации Event
 func decodeEvent(data []byte) (model.Event, error) {
 	var event model.Event
-	// Можно использовать json.Unmarshal, если Event сериализуется в JSON
-	// return event, json.Unmarshal(data, &event)
-	return event, nil // заглушка
-}
+	err := json.Unmarshal(data, &event)
+	if err != nil {
+		return model.Event{}, err
+	}
+	// Дополнительная валидация
+	if !event.Validate() {
+		return model.Event{}, errors.New("invalid event data")
+	}
 
-func encodeEvent(event model.Event) ([]byte, error) {
-	// Можно использовать json.Marshal, если Event сериализуется в JSON
-	// return json.Marshal(event)
-	return nil, nil // заглушка
+	return event, nil
 }

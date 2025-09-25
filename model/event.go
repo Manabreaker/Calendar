@@ -12,5 +12,5 @@ func (e *Event) Validate() bool {
 	if e.Title == "" || e.Date == "" || e.OwnerID == "" {
 		return false
 	}
-	return checkUserID(e.OwnerID)
+	return true
 }
