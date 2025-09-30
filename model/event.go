@@ -9,7 +9,7 @@ type Event struct {
 }
 
 func (e *Event) Validate() bool {
-	if e.Title == "" || e.Date == "" || e.OwnerID == "" {
+	if e.ID == "" || e.Title == "" || e.Date == "" || e.OwnerID == "" {
 		return false
 	}
 	return true

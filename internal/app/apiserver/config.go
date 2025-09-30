@@ -1,6 +1,6 @@
-package configs
+package apiserver
 
 type ServerConfig struct {
-	Port string `yaml:"port"`
 	Host string `yaml:"host"`
+	Port string `yaml:"port"`
 }

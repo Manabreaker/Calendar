@@ -1,0 +1,62 @@
+# type Event struct {
+#	ID          string `json:"id"`
+#	Title       string `json:"title"`
+#	Description string `json:"description"`
+#	Date        string `json:"date"`
+#	OwnerID     string `json:"owner_id"`
+#}
+# POST /create_event — создание нового события;
+#POST /update_event — обновление существующего;
+#POST /delete_event — удаление;
+#
+#GET /events_for_day — получить все события на день;
+#GET /events_for_week — события на неделю;
+#GET /events_for_month — события на месяц.
+
+
+###
+POST localhost:8080/create_event
+Content-Type: application/json
+
+{
+  "id": "1",
+  "title": "Meeting with Bob",
+  "description": "Discuss project updates",
+  "date": "2025-10-01",
+  "owner_id": "user123"
+}
+###
+POST localhost:8080/create_event
+Content-Type: application/json
+
+{
+  "id": "2",
+  "title": "Meeting with Sam",
+  "description": "Discuss project updates",
+  "date": "2025-09-30",
+  "owner_id": "user123"
+}
+
+###
+POST localhost:8080/create_event
+Content-Type: application/json
+
+{
+  "id": "4",
+  "title": "Meeting with Sam",
+  "description": "Discuss project updates",
+  "date": "2025-11-30",
+  "owner_id": "user123"
+}
+
+### На сегодня
+GET localhost:8080/events_for_day
+
+### На неделю
+GET localhost:8080/events_for_week
+
+### На месяц
+GET localhost:8080/events_for_month
+
+### Все события
+GET localhost:8080/events_for_all
